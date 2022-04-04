@@ -17,7 +17,6 @@ class AuthGroup(models.Model):
 
 
 class AuthGroupPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
@@ -56,7 +55,6 @@ class AuthUser(models.Model):
 
 
 class AuthUserGroups(models.Model):
-    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
@@ -67,7 +65,6 @@ class AuthUserGroups(models.Model):
 
 
 class AuthUserUserPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
@@ -76,16 +73,40 @@ class AuthUserUserPermissions(models.Model):
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
+
+class Course(models.Model):
+    course_id = models.CharField(primary_key=True, max_length=8)
+    title = models.CharField(max_length=32, blank=True, null=True)
+    dept_name = models.ForeignKey('Department', models.DO_NOTHING, db_column='dept_name', blank=True, null=True)
+    credits = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'course'
+
+
 class Department(models.Model):
-    dept_name = models.CharField(primary_key=True, max_length=32)
-    building = models.CharField(max_length=32, blank=True, null=True)
+    dept_name = models.CharField(primary_key=True, max_length=25)
+    building = models.CharField(max_length=10, blank=True, null=True)
     budget = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'department'
-# Unable to inspect table 'django_admin_log'
-# The error was: 'DatabaseIntrospection' object has no attribute '_parse_constraint_columns'
+
+
+class DjangoAdminLog(models.Model):
+    action_time = models.DateTimeField()
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.PositiveSmallIntegerField()
+    change_message = models.TextField()
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
 
 
 class DjangoContentType(models.Model):
@@ -99,7 +120,6 @@ class DjangoContentType(models.Model):
 
 
 class DjangoMigrations(models.Model):
-    id = models.BigAutoField(primary_key=True)
     app = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     applied = models.DateTimeField()
@@ -120,22 +140,58 @@ class DjangoSession(models.Model):
 
 
 class Instructor(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=32, blank=True, null=True)
+    id = models.IntegerField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(max_length=25, blank=True, null=True)
     dept_name = models.ForeignKey(Department, models.DO_NOTHING, db_column='dept_name', blank=True, null=True)
-    salary = models.DecimalField(max_digits=9, decimal_places=2, blank=True, null=True)
+    salary = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'instructor'
 
 
+class Prereq(models.Model):
+    course_id = models.CharField(max_length=8, blank=True, null=True)
+    preq_id = models.CharField(max_length=8, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'prereq'
+
+
 class Student(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=30, blank=True, null=True)
-    dept = models.CharField(max_length=30, blank=True, null=True)
+    id = models.IntegerField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(max_length=20, blank=True, null=True)
+    dept_name = models.ForeignKey(Department, models.DO_NOTHING, db_column='dept_name', blank=True, null=True)
     total_credits = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'student'
+
+
+class Takes(models.Model):
+    ID = models.ForeignKey(Student, models.DO_NOTHING, db_column='ID')  # Field name made lowercase.
+    course_id = models.IntegerField()
+    sec_id = models.IntegerField()
+    semester = models.CharField(max_length=6)
+    year = models.IntegerField()
+    grade = models.CharField(max_length=3, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'takes'
+        unique_together = (('id', 'course_id', 'sec_id', 'semester', 'year'),)
+
+
+class Teaches(models.Model):
+    course_id = models.CharField(max_length=8)
+    sec_id = models.IntegerField()
+    semester = models.CharField(max_length=12)
+    year = models.IntegerField()
+    ID = models.ForeignKey(Instructor, models.DO_NOTHING, db_column='ID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'teaches'
+        unique_together = (('course_id', 'sec_id', 'semester', 'year', 'id'),)
