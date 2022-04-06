@@ -21,7 +21,7 @@ def my_view(request):
         ...
 
 # def index(request):
-
+  
   # template = loader.get_template('myapp/form.html')
   # context = { }
 
@@ -29,7 +29,7 @@ def my_view(request):
 
 
 # def show(request):
-
+  
   # amount=request.POST['amount']
   # print(amount)
 

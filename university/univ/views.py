@@ -9,7 +9,7 @@ def index(request):
 
 def student(request):
     db = mysql.connector.connect(
-            host = "localhost",
+            host = "128.153.190.69",
             user = "root",
             passwd = "password",
             auth_plugin = "mysql_native_password",
@@ -41,3 +41,36 @@ def student(request):
     db.close()
 
     return HttpResponse(data)
+
+def professor(request):
+        db = mysql.connector.connect(
+            host = "128.153.190.69",
+            user = "root",
+            passwd = "password",
+            auth_plugin = "mysql_native_password",
+            database = "university",
+            )
+        
+        cursor = db.cursor()
+        cursor.execute("select name, dept_name, salary from instructor;")
+
+        data='<title>Instructor Info</title>'
+        data='<h1>Instructors:</h1>'
+        data += '<table style="width:800px">'
+        data += '<tr><th>Instructor Name</th> <th>Department Name</th>' + \
+                '<th>Salary</th>'
+       
+        for(name, dept_name, salary) in cursor:
+           r = ('<tr>' + \
+                '<th>' + str(name) + '</th>' + \
+                '<th>' + dept_name + '</th>' + \
+                '<th>' + str(salary) + '</th>' + \
+                '</t>')
+           data += r
+        data += '</table>'
+
+        cursor.close()
+        db.close()
+
+        return HttpResponse(data)
+

@@ -55,7 +55,9 @@ ROOT_URLCONF = 'university.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'index.html'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,7 +82,7 @@ DATABASES = {
         'NAME': 'university',
         'USER': 'root',
         'PASSWORD': 'password',
-        'HOST': 'localhost'
+        'HOST': '128.153.190.69'
     }
 }
 
