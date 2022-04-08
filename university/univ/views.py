@@ -78,34 +78,82 @@ def studentResult(request):
     return HttpResponse(data)
 
 def professor(request):
-        db = mysql.connector.connect(
-            host = "128.153.174.218",
-            user = "root",
-            passwd = "password",
-            auth_plugin = "mysql_native_password",
-            database = "university",
-            )
-        
-        cursor = db.cursor()
-        cursor.execute("select name, dept_name, salary from instructor;")
+    form = '<!DOCTYPE html>' + \
+        '<html>' + \
+        '<body>' + \
+        '<h1>Professor:</h1>' + \
+        '<form action="courses/" method="post">' + \
+            '<input type-"text" id="ID" name="ID">' + \
+            '<label for="ID"> Teacher ID</label><br>' + \
+            '<input type-"text" id="semester" name="semester">' + \
+            '<label for="semester"> Semester [1 for fall, 2 for spring]</label><br>' + \
+            '<input type-"text" id="year" name="year">' + \
+            '<label for="year"> Year [XXXX]</label><br>' + \
+            '<input type="submit" value = "View courses">' + \
+        '</form><br><br>' + \
+        '<form action="students/" method="post">' + \
+            '<input type-"text" id="courseID" name="courseID">' + \
+            '<label for="courseID"> Course ID</label><br>' + \
+            '<input type-"text" id="semester" name="semester">' + \
+            '<label for="semester"> Semester [1 for fall, 2 for spring]</label><br>' + \
+            '<input type-"text" id="year" name="year">' + \
+            '<label for="year"> Year [XXXX]</label><br>' + \
+            '<input type="submit" value="View students">' + \
+        '</form>' + \
+        '<p>Choose what to do.</p>' + \
+        '</body>' + \
+        '</html>'
 
-        data='<title>Instructor Info</title>'
-        data='<h1>Instructors:</h1>'
-        data += '<table style="width:800px">'
-        data += '<tr><th>Instructor Name</th> <th>Department Name</th>' + \
-                '<th>Salary</th>'
-       
-        for(name, dept_name, salary) in cursor:
-           r = ('<tr>' + \
-                '<th>' + str(name) + '</th>' + \
-                '<th>' + dept_name + '</th>' + \
-                '<th>' + str(salary) + '</th>' + \
-                '</t>')
-           data += r
-        data += '</table>'
+    return HttpResponse(form)
 
-        cursor.close()
-        db.close()
+@csrf_exempt
+def professorCourses(request):
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        passwd="password",
+        auth_plugin="mysql_native_password",
+        database="university",
+    )
 
-        return HttpResponse(data)
+    mycursor = mydb.cursor()
 
+    lastName = request.POST['ID']
+    semester = request.POST['semester']
+    year = request.POST['year']
+    query = "select C.course_id as course_id, count(C.course_id) as count from (select course.course_id, takes.id" + \
+            " from course join takes where course.course_id=takes.course_id) C group by C.course_id;"
+    mycursor.execute(query)
+
+    data = '<h1>Courses:</h1>'
+    data += '<table style="width:800px">'
+    data += '<tr><th>Course ID</th> <th>Number of Students</th></tr>'
+    for (course_id, count) in mycursor:
+        r = ('<tr>' +
+             '<th>' + str(course_id) + '</th>' +
+             '<th>' + str(count) + '</th>' +
+             '</t>')
+        data += r
+    data += '</table>'
+    data += '<a href="">Go back</a>'
+    mycursor.close()
+    mydb.close()
+
+    return HttpResponse(data)
+
+@csrf_exempt
+def professorStudents(request):
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        passwd="password",
+        auth_plugin="mysql_native_password",
+        database="university",
+    )
+
+    mycursor = mydb.cursor()
+
+    department = request.POST['courseID']
+    semester = request.POST['semester']
+    year = request.POST['year']
+    return HttpResponse("Professor: View students")
