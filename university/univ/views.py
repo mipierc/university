@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 import mysql.connector
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     return HttpResponse("Welcome to the University Database.\nPlease log in:")
@@ -17,7 +18,20 @@ def student(request):
         )
 
     cursor = db.cursor()
-    cursor.execute("select course.course_id, title, dept_name, sec_id, semester, year from course join teaches where course.course_id=teaches.course_id;")
+
+    department = request.POST['department']
+    semester = request.POST['semester']
+    year = request.POST['year']
+    query = "select course.course_id, title, dept_name, sec_id, semester, year from course natural join section " + \
+            "where course.course_id=section.course_id"
+    if department != "":
+        query += " and dept_name=\"" + department + "\""
+    if semester != "":
+        query += " and semester=\"" + semester + "\""
+    if year != "":
+        query += " and year=\"" + year + "\""
+    query += ";"
+    cursor.execute(query)
 
     data='<title>Student Info</title>'
     data='<h1>Courses:</h1>'
@@ -28,9 +42,9 @@ def student(request):
     for (course_id, sec_id, title, dept_name, semester, year) in cursor:
         r = ('<tr>' + \
                 '<th>' + str(course_id) + '</th>' + \
+                '<th>' + str(sec_id) + '</th>' + \
                 '<th>' + title + '</th>' + \
                 '<th>' + dept_name + '</th>' + \
-                '<th>' + str(sec_id) + '</th>' + \
                 '<th>' + str(semester) + '</th>' + \
                 '<th>' + str(year) + '</th>' + \
                 '</t>')
@@ -75,6 +89,7 @@ def administrator(request):
 
     return HttpResponse(form)
 
+@csrf_exempt
 def f1(request):
     db = mysql.connector.connect(
         host = "128.153.174.218",
@@ -111,6 +126,7 @@ def f1(request):
 
     return HttpResponse(data)
 
+@csrf_exempt
 def f2(request):
     db = mysql.connector.connect(
         host = "128.153.174.218",
@@ -144,6 +160,7 @@ def f2(request):
 
     return HttpResponse(data)
 
+@csrf_exempt
 def f3(request):
     db = mysql.connector.connect(
         host = "128.153.174.218",
