@@ -23,4 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('student/', views.student),
     path('professor/', views.professor),
+    path('administrator/', views.administrator),
+    path('administrator/f1/', views.f1),
+    path('administrator/f2/', views.f2),
+    path('administrator/f3/', views.f3),
 ]
