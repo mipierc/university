@@ -66,7 +66,7 @@ def administrator(request):
         '<form action="f1/" method="post">' + \
             '<p> F1. Create a list of professors sorted by: <p>' + \
             '<INPUT TYPE=radio NAME="sort_method" VALUE="name" CHECKED> Name</LABEL><BR>' + \
-            '<INPUT TYPE=radio NAME="sort_method" VALUE="dept"> Department</LABEL><BR>' + \
+            '<INPUT TYPE=radio NAME="sort_method" VALUE="dept_name"> Department</LABEL><BR>' + \
             '<INPUT TYPE=radio NAME="sort_method" VALUE="salary"> Salary</LABEL>' + \
             '<p> </p>' + \
             '<input type="submit" value = "View professors">' + \
@@ -81,7 +81,6 @@ def administrator(request):
             '<input type-"text" id="semester" name="semester"><br><br>' + \
             '<input type="submit" value = "View professors">' + \
         '</form>' + \
-        '<p>Choose a function above.</p>' + \
         '<p><a href="/">Home</a></p>' + \
         '<p><a href="/accounts/login/">Log Out</a></p>' + \
         '</body>' + \
@@ -100,7 +99,6 @@ def f1(request):
     )
 
     cursor = db.cursor()
-    cursor.execute("select ;")
 
     sort_method = request.POST['sort_method']
     query = "select * from instructor order by " + sort_method + ";"
@@ -110,11 +108,11 @@ def f1(request):
     data='<h1>Results:</h1>'
     data += '<table style="width:400px">'
     data += '<tr><th>ID</th> <th>Name</th> <th>Dept</th> <th>Salary</th> </tr>'
-    for (ID, name, dept, salary) in cursor:
+    for (ID, name, dept_name, salary) in cursor:
         r = ('<tr>' + \
                 '<th>' + str(ID) + '</th>' + \
                 '<th>' + str(name) + '</th>' + \
-                '<th>' + str(dept) + '</th>' + \
+                '<th>' + str(dept_name) + '</th>' + \
                 '<th>' + str(salary) + '</th>' + \
                 '</t>')
         data += r
@@ -138,7 +136,7 @@ def f2(request):
 
     cursor = db.cursor()
     dept = request.POST['department']
-    query = "select MAX(salary), MIN(salary), AVG(salary) from instructor where instructor.dept_name = " + dept + ";"
+    query = "select MAX(salary), MIN(salary), AVG(salary) from instructor where instructor.dept_name = \"" + dept + "\";"
     cursor.execute(query)
 
     data='<title>Administrator Info</title>'
@@ -172,9 +170,12 @@ def f3(request):
 
     cursor = db.cursor()
     semester = request.POST['semester']
-    query = "select instructor.name, instructor.dept_name, COUNT(student.name) from instructor, student, teaches, takes where instructor.ID = teaches.ID AND teaches.course_id = takes.course_id AND takes.ID = student.ID "
+    query = "select I.name, I.dept_name, COUNT(S.name) " + \
+    "from instructor I, student S, teaches T, takes R " + \
+    "where I.ID = T.ID AND T.course_id = R.course_id AND R.ID = S.ID "
     if semester != "":
-        query += "and takes.semester = " + semester + ";"
+        query += "and R.semester = "  + semester 
+        query += ";"
     cursor.execute(query)
 
     data='<title>Administrator Info</title>'
