@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'university',
         'USER': 'root',
         'PASSWORD': 'password',
-        'HOST': '128.153.174.218'
+        'HOST': 'localhost'
     }
 }
 

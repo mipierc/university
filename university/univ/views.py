@@ -4,26 +4,54 @@ from django.http import HttpResponse
 from django.template import loader
 import mysql.connector
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import permission_required
 
 def index(request):
     return HttpResponse("Welcome to the University Database.\nPlease log in:")
 
 def student(request):
-    db = mysql.connector.connect(
-            host = "128.153.174.218",
-            user = "root",
-            passwd = "password",
-            auth_plugin = "mysql_native_password",
-            database = "university",
-        )
 
-    cursor = db.cursor()
+    form = '<!DOCTYPE html>' + \
+           '<html>' + \
+           '<body>' + \
+           '<h1>Display Courses</h1>' + \
+           '<form action="studentResult/" method="post">' + \
+           '<input type-"text" id="department" name="department">' + \
+           '<label for="department"> Department</label><br><br>' + \
+           '<input type-"text" id="semester" name="semester">' + \
+           '<label for="semester"> Semester [1 for fall, 2 for spring]</label><br><br>' + \
+           '<input type-"text" id="year" name="year">' + \
+           '<label for="year"> Year [XXXX]</label><br><br>' + \
+           '<input type="submit" value = "Submit">' + \
+           '</form>' + \
+           '<p>Click on the submit button to submit the form.</p>' + \
+           '<p><a href="/">Home</a></p>' + \
+           '<p><a href="/accounts/login/">Log Out</a></p>' + \
+           '</html>'
+
+
+    return HttpResponse(form)
+
+@csrf_exempt
+def studentResult(request):
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        # passwd="root",
+        passwd="password",
+        auth_plugin="mysql_native_password",
+        database="university",
+    )
+
+    mycursor = mydb.cursor()
 
     department = request.POST['department']
     semester = request.POST['semester']
     year = request.POST['year']
-    query = "select course.course_id, title, dept_name, sec_id, semester, year from course natural join section " + \
-            "where course.course_id=section.course_id"
+    query = "select course.course_id, title, dept_name, sec_id, semester, year from course join teaches " + \
+            "where course.course_id=teaches.course_id"
     if department != "":
         query += " and dept_name=\"" + department + "\""
     if semester != "":
@@ -31,28 +59,28 @@ def student(request):
     if year != "":
         query += " and year=\"" + year + "\""
     query += ";"
-    cursor.execute(query)
+    mycursor.execute(query)
 
-    data='<title>Student Info</title>'
-    data='<h1>Courses:</h1>'
+    data = '<h1>Courses:</h1>'
     data += '<table style="width:800px">'
     data += '<tr><th>Course ID</th> <th>Course Title</th>' + \
             '<th>Department Name</th> <th>Section</th>' + \
             '<th>Semester</th> <th>Year</th></tr>'
-    for (course_id, sec_id, title, dept_name, semester, year) in cursor:
-        r = ('<tr>' + \
-                '<th>' + str(course_id) + '</th>' + \
-                '<th>' + str(sec_id) + '</th>' + \
-                '<th>' + title + '</th>' + \
-                '<th>' + dept_name + '</th>' + \
-                '<th>' + str(semester) + '</th>' + \
-                '<th>' + str(year) + '</th>' + \
-                '</t>')
+    for (course_id, title, dept_name, sec_id, semester, year) in mycursor:
+        r = ('<tr>' +
+             '<th>' + str(course_id) + '</th>' +
+             '<th>' + str(title) + '</th>' +
+             '<th>' + str(dept_name) + '</th>' +
+             '<th>' + str(sec_id) + '</th>' +
+             '<th>' + str(semester) + '</th>' +
+             '<th>' + str(year) + '</th>' +
+             '</t>')
         data += r
     data += '</table>'
-   
-    cursor.close()
-    db.close()
+    data += '<a href="/student/">Back</a>'
+
+    mycursor.close()
+    mydb.close()
 
     return HttpResponse(data)
 
@@ -73,12 +101,13 @@ def administrator(request):
         '</form><br><br>' + \
         '<form action="f2/" method="post">' + \
             '<p> F2. Create a table of the min/max/average salaries of a department: <p>' + \
-            '<input type-"text" id="department" name="department"><br><br>' + \
+            '<input type-"text" id="department" name="department" placeholder="ECE"><br><br>' + \
             '<input type="submit" value = "View salaries">' + \
         '</form><br><br>' + \
         '<form action="f3/" method="post">' + \
             '<p> F3. Create a table of professors, their department and how many students they taught in a given semester: <p>' + \
-            '<input type-"text" id="semester" name="semester"><br><br>' + \
+            '<input type-"text" id="semester" name="semester" placeholder="1"><br><br>' + \
+            '<input type-"text" id="year" name="year" placeholder="2020"><br><br>' + \
             '<input type="submit" value = "View professors">' + \
         '</form>' + \
         '<p><a href="/">Home</a></p>' + \
@@ -91,7 +120,7 @@ def administrator(request):
 @csrf_exempt
 def f1(request):
     db = mysql.connector.connect(
-        host = "128.153.174.218",
+        host = "localhost",
         user = "root",
         passwd = "password",
         auth_plugin = "mysql_native_password",
@@ -117,7 +146,7 @@ def f1(request):
                 '</t>')
         data += r
     data += '</table>'
-    data += '<a href="/admin/">Back</a>'
+    data += '<a href="/administrator/">Back</a>'
 
     cursor.close()
     db.close()
@@ -127,7 +156,7 @@ def f1(request):
 @csrf_exempt
 def f2(request):
     db = mysql.connector.connect(
-        host = "128.153.174.218",
+        host = "localhost",
         user = "root",
         passwd = "password",
         auth_plugin = "mysql_native_password",
@@ -161,7 +190,7 @@ def f2(request):
 @csrf_exempt
 def f3(request):
     db = mysql.connector.connect(
-        host = "128.153.174.218",
+        host = "localhost",
         user = "root",
         passwd = "password",
         auth_plugin = "mysql_native_password",
@@ -170,11 +199,13 @@ def f3(request):
 
     cursor = db.cursor()
     semester = request.POST['semester']
+    year = request.POST['year']
     query = "select I.name, I.dept_name, COUNT(S.name) " + \
     "from instructor I, student S, teaches T, takes R " + \
     "where I.ID = T.ID AND T.course_id = R.course_id AND R.ID = S.ID "
     if semester != "":
         query += "and R.semester = "  + semester 
+        query += " and R.year = "  + year 
         query += ";"
     cursor.execute(query)
 
@@ -190,7 +221,7 @@ def f3(request):
                 '</t>')
         data += r
     data += '</table>'
-    data += '<a href="/admin/">Back</a>'
+    data += '<a href="/administrator/">Back</a>'
 
     cursor.close()
     db.close()
