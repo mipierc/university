@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import permission_required
+from .forms import CreateUserForm
+from .models import *
 
 def index(request):
     return HttpResponse("Welcome to the University Database.\nPlease log in:")
@@ -180,7 +182,7 @@ def f2(request):
                 '</t>')
         data += r
     data += '</table>'
-    data += '<a href="/admin/">Back</a>'
+    data += '<a href="/administrator/">Back</a>'
 
     cursor.close()
     db.close()
@@ -286,7 +288,7 @@ def professorCourses(request):
              '</t>')
         data += r
     data += '</table>'
-    data += '<a href="">Go back</a>'
+    data += '<a href="/professor/">Go back</a>'
     mycursor.close()
     mydb.close()
 

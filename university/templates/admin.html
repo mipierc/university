@@ -1,0 +1,88 @@
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>University</title>
+    
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+        body{
+            background: #c6ccc3;
+        }
+        .row{
+            background: #fefdfd;
+            border-radius: 30px;
+            box-shadow: 12px 12px 22px grey;
+        }
+        img{
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+        }
+        .btn1{
+            border: none;
+            outline: none;
+            margin-bottom: 0;
+            height: 50px;
+            width: 100%;
+            background-color: #24252f;
+            color: #fefdfd;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .btn1:hover{
+            background: #fefdfd;
+            border: 2px solid;
+            color: #3a3153;
+        }
+        a{
+            color: black;
+        }
+        br{
+            margin: 0;
+        }
+
+    </style>
+  </head>
+  <body>
+    <section>
+        <div class="container my-5">
+            <div class="row no-gutters">
+                <div class="text-center col px-5 py-2">
+                    <h1>Administrator:</h1>
+                    <h6>Choose which of the following functions to perform: </h6>
+                    <hr></hr>
+                    <form action="f1/" method="post">
+                        <p> F1. Create a list of professors sorted by: </p>
+                        <INPUT TYPE=radio NAME="sort_method" VALUE="name" CHECKED> Name&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</LABEL><BR>
+                        <INPUT TYPE=radio NAME="sort_method" VALUE="dept_name"> Department</LABEL><BR>
+                        <INPUT TYPE=radio NAME="sort_method" VALUE="salary"> Salary&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</LABEL>
+                        <p></p>
+                        <input class="btn1" type="submit" value = "View professors">
+                    </form><br><br>
+                    <form action="f2/" method="post">
+                        <p> F2. Create a table of the min/max/average salaries of a department: </p>
+                        <input type-"text" id="department" name="department" placeholder="ECE"><br><br>
+                        <input class="btn1" type="submit" value = "View salaries">
+                    </form><br><br>
+                    <form action="f3/" method="post">
+                        <p> F3. Create a table of professors, their department and how many students they taught in a given semester: </p>
+                        <input type-"text" id="semester" name="semester" placeholder="1"><br><br>
+                        <input type-"text" id="year" name="year" placeholder="2020"><br><br>
+                        <input class="btn1" type="submit" value = "View professors">
+                    </form><br>
+                    <p><a href="/">Home</a></p>
+                    <p><a href="/accounts/login/">Log Out</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+  </body>
+</html>
