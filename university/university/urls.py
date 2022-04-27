@@ -27,7 +27,7 @@ urlpatterns = [
     path('student/',TemplateView.as_view(template_name='student.html'), name="student"),
     path('student/studentResult/', views.studentResult),
     path('professor/', TemplateView.as_view(template_name='professor.html'), name="professor"),
-    path('professor/courses/', views.professorCourses),
+    path('professor/courses/', views.professorCourses, name="courses"),
     path('professor/students/', views.professorStudents),
     path('administrator/', TemplateView.as_view(template_name='admin.html'), name="admin"),
     path('administrator/f1/', views.f1),

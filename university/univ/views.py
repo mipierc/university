@@ -9,10 +9,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import permission_required
 from .forms import CreateUserForm
 from .models import *
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return HttpResponse("Welcome to the University Database.\nPlease log in:")
 
+@login_required
 def student(request):
 
     form = '<!DOCTYPE html>' + \
@@ -86,6 +88,7 @@ def studentResult(request):
 
     return HttpResponse(data)
 
+@login_required
 def administrator(request):
 
     form = '<!DOCTYPE html>' + \
@@ -136,9 +139,11 @@ def f1(request):
     cursor.execute(query)
 
     data='<title>Administrator Info</title>'
-    data='<h1>Results:</h1>'
-    data += '<table style="width:400px">'
-    data += '<tr><th>ID</th> <th>Name</th> <th>Dept</th> <th>Salary</th> </tr>'
+    data = '<div class="container">' + \
+            '<div class="row no-gutters">' + \
+    '<style>a{display: flex; justify-content: center; margin-bottom: 40px;} .container{display: flex; justify-content: center; margin: 40px;} th{padding: .45rem .25rem;} *{padding: 0;margin: 0;box-sizing: border-box;font-family: "Nunito", sans-serif;}body{background: #c6ccc3;}.row{background: #fefdfd;border-radius: 30px;box-shadow: 12px 12px 22px grey;}img{border-top-left-radius: 30px;border-bottom-left-radius: 30px;}.btn1{border: none;outline: none;margin-bottom: 0;height: 50px;width: 100%;background-color: #24252f;color: #fefdfd;border-radius: 4px;font-weight: bold;}.btn1:hover{background: #fefdfd;border: 2px solid;color: #3a3153;a{color: black;}br{margin: 0;}</style>'
+    data += '<table style="width:900px">'
+    data += '<br></br><tr><th>ID</th> <th>Name</th> <th>Dept</th> <th>Salary</th> </tr>'
     for (ID, name, dept_name, salary) in cursor:
         r = ('<tr>' + \
                 '<th>' + str(ID) + '</th>' + \
@@ -147,7 +152,7 @@ def f1(request):
                 '<th>' + str(salary) + '</th>' + \
                 '</t>')
         data += r
-    data += '</table>'
+    data += '</table><br></br><br></br>'
     data += '<a href="/administrator/">Back</a>'
 
     cursor.close()
@@ -167,21 +172,27 @@ def f2(request):
 
     cursor = db.cursor()
     dept = request.POST['department']
-    query = "select MAX(salary), MIN(salary), AVG(salary) from instructor where instructor.dept_name = \"" + dept + "\";"
+    query = "select MAX(salary), MIN(salary), AVG(salary) from instructor"
+    if dept != "":
+        query += " where dept_name = '" + dept + "';"
+    else:
+        query += ";"
     cursor.execute(query)
 
     data='<title>Administrator Info</title>'
-    data='<h1>Results:</h1>'
-    data += '<table style="width:400px">'
-    data += '<tr><th>Max</th> <th>Min</th> <th>Average</th></tr>'
+    data = '<div class="container">' + \
+            '<div class="row no-gutters">' + \
+    '<style>a{display: flex; justify-content: center; margin-bottom: 40px;} .container{display: flex; justify-content: center; margin: 50px;} th{padding: .45rem .5rem;} *{padding: 0;margin: 0;box-sizing: border-box;font-family: "Nunito", sans-serif;}body{background: #c6ccc3;}.row{background: #fefdfd;border-radius: 30px;box-shadow: 12px 12px 22px grey;}img{border-top-left-radius: 30px;border-bottom-left-radius: 30px;}.btn1{border: none;outline: none;margin-bottom: 0;height: 50px;width: 100%;background-color: #24252f;color: #fefdfd;border-radius: 4px;font-weight: bold;}.btn1:hover{background: #fefdfd;border: 2px solid;color: #3a3153;a{color: black;}br{margin: 0;}</style>'
+    data += '<table style="width:500px">'
+    data += '<br></br><tr><th>Max</th> <th>Min</th> <th>Average</th></tr>'
     for (max, min, avg) in cursor:
         r = ('<tr>' + \
                 '<th>' + str(max) + '</th>' + \
                 '<th>' + str(min) + '</th>' + \
                 '<th>' + str(avg) + '</th>' + \
-                '</t>')
+                '</tr>')
         data += r
-    data += '</table>'
+    data += '</table><br></br>'
     data += '<a href="/administrator/">Back</a>'
 
     cursor.close()
@@ -211,18 +222,20 @@ def f3(request):
         query += ";"
     cursor.execute(query)
 
-    data='<title>Administrator Info</title>'
-    data='<h1>Results:</h1>'
-    data += '<table style="width:400px">'
-    data += '<tr><th>Name</th> <th>Dept</th> <th>Number of Students</th> </tr>'
+    data ='<title>Administrator Info</title>'
+    data = '<div class="container">' + \
+            '<div class="row no-gutters">' + \
+    '<style>a{display: flex; justify-content: center; margin-bottom: 40px;} .container{display: flex; justify-content: center; margin: 40px;} th{padding: .45rem .5rem;} *{padding: 0;margin: 0;box-sizing: border-box;font-family: "Nunito", sans-serif;}body{background: #c6ccc3;}.row{background: #fefdfd;border-radius: 30px;box-shadow: 12px 12px 22px grey;}img{border-top-left-radius: 30px;border-bottom-left-radius: 30px;}.btn1{border: none;outline: none;margin-bottom: 0;height: 50px;width: 100%;background-color: #24252f;color: #fefdfd;border-radius: 4px;font-weight: bold;}.btn1:hover{background: #fefdfd;border: 2px solid;color: #3a3153;a{color: black;}br{margin: 0;}</style>'
+    data += '<table style="width:900px">'
+    data += '<br></br><tr><th>Name</th> <th>Dept</th> <th>Number of Students</th> </tr>'
     for (name, dept, count) in cursor:
         r = ('<tr>' + \
                 '<th>' + str(name) + '</th>' + \
                 '<th>' + str(dept) + '</th>' + \
                 '<th>' + str(count) + '</th>' + \
-                '</t>')
+                '</tr>')
         data += r
-    data += '</table>'
+    data += '</table><br></br>'
     data += '<a href="/administrator/">Back</a>'
 
     cursor.close()
@@ -230,6 +243,7 @@ def f3(request):
 
     return HttpResponse(data)
     
+@login_required
 def professor(request):
     form = '<!DOCTYPE html>' + \
         '<html>' + \
@@ -259,6 +273,7 @@ def professor(request):
 
     return HttpResponse(form)
 
+@login_required
 @csrf_exempt
 def professorCourses(request):
     mydb = mysql.connector.connect(
@@ -271,24 +286,35 @@ def professorCourses(request):
 
     mycursor = mydb.cursor()
 
-    lastName = request.POST['ID']
-    semester = request.POST['semester']
-    year = request.POST['year']
-    query = "select C.course_id as course_id, count(C.course_id) as count from (select course.course_id, takes.id" + \
-            " from course join takes where course.course_id=takes.course_id) C group by C.course_id;"
-    mycursor.execute(query)
+    course_id = request.POST.get('course_id')
+    section = request.POST.get('sec_id')
+    query = "select course_id, section, count(course_id) from" \
+            " (select course.course_id as course_id, teaches.id as student_id, teaches.sec_id as section from " \
+            "course join teaches where course.course_id=teaches.course_id) as courses" \
 
-    data = '<h1>Courses:</h1>'
+    if course_id != "":
+        query += " where course_id=\"" + course_id + "\""
+    if section != "":
+        if course_id != "":
+            query += " and section=" + section
+        else:
+            query += " where section=" + section
+    query += " group by course_id, section;"
+    mycursor.execute(query)
+    data = '<div class="container">' + \
+            '<div class="row no-gutters">' + \
+    '<style>.container{display: flex; justify-content: center; margin: 40px;} th{padding: .45rem .5rem;} *{padding: 0;margin: 0;box-sizing: border-box;font-family: "Nunito", sans-serif;}body{background: #c6ccc3;}.row{background: #fefdfd;border-radius: 30px;box-shadow: 12px 12px 22px grey;}img{border-top-left-radius: 30px;border-bottom-left-radius: 30px;}.btn1{border: none;outline: none;margin-bottom: 0;height: 50px;width: 100%;background-color: #24252f;color: #fefdfd;border-radius: 4px;font-weight: bold;}.btn1:hover{background: #fefdfd;border: 2px solid;color: #3a3153;a{color: black;}br{margin: 0;}</style>'
     data += '<table style="width:800px">'
-    data += '<tr><th>Course ID</th> <th>Number of Students</th></tr>'
-    for (course_id, count) in mycursor:
+    data += '<br></br><tr><th>Course ID</th> <th>Section ID</th> <th>Number of Students</th></tr>'
+    for (course_id, sec_id, count) in mycursor:
         r = ('<tr>' +
              '<th>' + str(course_id) + '</th>' +
+             '<th>' + str(sec_id) + '</th>' +
              '<th>' + str(count) + '</th>' +
              '</t>')
         data += r
-    data += '</table>'
-    data += '<a href="/professor/">Go back</a>'
+    data += '</div></div></table><br><br><br></br>'
+    data += '<a style="display: flex; justify-content: center; margin-bottom: 40px;" href="/professor/">Go back</a>'
     mycursor.close()
     mydb.close()
 
@@ -305,8 +331,44 @@ def professorStudents(request):
     )
 
     mycursor = mydb.cursor()
-
-    department = request.POST['courseID']
+    instructor = request.POST['instructor_name']
     semester = request.POST['semester']
     year = request.POST['year']
-    return HttpResponse("Professor: View students")
+    query = "select courses.course_id course_id, courses.sec_id sec_id, courses.semester semester, courses.year year," \
+            " courses.name name, teaches.id teacher_id, instructor.name instructor from teaches join instructor" \
+            " join (select student.name name, course_id, sec_id, semester, year from student join takes" \
+            " where student.id=takes.id) as courses where courses.course_id=teaches.course_id" \
+            " and courses.semester=teaches.semester and courses.year=teaches.year and courses.sec_id=teaches.sec_id" \
+            " and teaches.id=instructor.ID"
+
+    if instructor != "":
+        query += " and instructor.name=\"" + instructor + "\""
+    if semester != "":
+        query += " and courses.semester=" + semester
+    if year != "":
+        query += " and courses.year=" + year
+    query += ";"
+    mycursor.execute(query)
+
+    data = '<div class="container">' + \
+            '<div class="row no-gutters">' + \
+    '<style>a{display: flex; justify-content: center; margin-bottom: 40px;} .container{display: flex; justify-content: center; margin: 40px;} th{padding: .45rem .5rem;} *{padding: 0;margin: 0;box-sizing: border-box;font-family: "Nunito", sans-serif;}body{background: #c6ccc3;}.row{background: #fefdfd;border-radius: 30px;box-shadow: 12px 12px 22px grey;}img{border-top-left-radius: 30px;border-bottom-left-radius: 30px;}.btn1{border: none;outline: none;margin-bottom: 0;height: 50px;width: 100%;background-color: #24252f;color: #fefdfd;border-radius: 4px;font-weight: bold;}.btn1:hover{background: #fefdfd;border: 2px solid;color: #3a3153;a{color: black;}br{margin: 0;}</style>'
+    data += '<table style="width:800px">'
+    data += '<br></br><tr><th>Course ID</th> <th>Section ID</th> <th>Student Name</th>' + \
+            '<th>Semester</th> <th>Year</th> <th>Instructor ID</th> <th>Instructor</th></tr>'
+    for (course_id, sec_id, semester, year, name, teacher_id, instructor) in mycursor:
+        r = ('<tr>' +
+             '<th>' + str(course_id) + '</th>' +
+             '<th>' + str(sec_id) + '</th>' +
+             '<th>' + str(name) + '</th>' +
+             '<th>' + str(semester) + '</th>' +
+             '<th>' + str(year) + '</th>' +
+             '<th>' + str(teacher_id) + '</th>' +
+             '<th>' + str(instructor) + '</th>' +
+             '</t>')
+        data += r
+    data += '</table><br><br><br></br>'
+    data += '<a href="/professor/">Back</a>'
+
+
+    return HttpResponse(data)
