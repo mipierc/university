@@ -9,7 +9,7 @@ The user can login using the following link: http://127.0.0.1:8000/accounts/logi
 
 This is what the login page will look like to the user.
 
-<img src='images/login.PNG' width=500>
+<img src='images/login.png' width=500>
 
 After the user submits their credentials for their account, they will be taken to a homepage where they can choose what action to perfrom next, dependent on their access level.
 
@@ -37,21 +37,21 @@ The admin user account is allowed to access three main functionalities that othe
     * The user must input semester ("1" for Spring and "2" for Fall) and the year they wish to access.
 
 ## The admin actions' page view
-<img src='images/admin.PNG' width=500>
+<img src='images/admin.png' width=500>
 
 ## The following are example outputs using the different actions allowed to the admin user account:
 
 ### Example 1: List of professors sorted by name:
 
-<img src='images/aex1.PNG' width=500>
+<img src='images/aex1.png' width=500>
 
 ### Example 2: Salary information for 'CS':
 
-<img src='images/aex2.PNG' width=500>
+<img src='images/aex2.png' width=500>
 
 ### Example 3: Students taught by a professor for 'Spring 2019':
 
-<img src='images/aex3.PNG' width=500>
+<img src='images/aex3.png' width=500>
 
 # Homepage - Professor
 
@@ -72,15 +72,15 @@ The professor user account is allowed to access 2 main functionalities that othe
     * The user must input a professor's name, semester ("1" for Spring and "2" for Fall), and year to view that specific course's students. Else, if no information is provided, all the students with what course they are enrolled in.
 
 ## The professor action's page view:
-<img src='images/professor.PNG' width=700>
+<img src='images/professor.png' width=700>
 
 ## The following are example outputs using the different actions allowed to the professor user account:
 
 ### Example 1: Results for CS141 Section 1
-<img src='images/pex1.PNG' width=700>
+<img src='images/pex1.png' width=700>
 
 ### Example 2: Results for Professor Hou in semester 1 of 2020
-<img src='images/pex2.PNG' width=700>
+<img src='images/pex2.png' width=700>
 
 ## Homepage - Student
 
@@ -93,12 +93,12 @@ The student user account is allowed to access 1 main functionality:
     * The user must input the department, semester ("1" for Spring and "2" for Fall), and year to view results. Else, all courses are shown with their respective semesters and years.
 
 ## The student action's page view:
-<img src='images/student.PNG' width=700>
+<img src='images/student.png' width=700>
 
 ## The following are example output using the different actions allowed to the student user account:
 
 ### Example 1: Results for CS department for CS141 of Fall 2019:
-<img src='images/sex1.PNG' width=700>
+<img src='images/sex1.png' width=700>
 
 ## Logging Out & Home
 
