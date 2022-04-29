@@ -25,16 +25,19 @@ Accounts are handled through the built-in django account manager accessible at `
 Student
 
 `username` student
+
 `password` j9p8XVLCDwqs7ch
 
 Instructor
 
 `username` instructor
+
 `password` BaAa5RLbbAb2zHY
 
 Admininstator
 
 `username` admin
+
 `password` VEcPmp7SQcbd5Ez
 
 Logging in will redirect the user to a page with a list of actions for which the user has authorization to complete. The admin has access to all actions, including the instructor and student actions. Instructor has access to both instructor and student actions.
