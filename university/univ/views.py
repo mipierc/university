@@ -66,7 +66,10 @@ def studentResult(request):
     mycursor.execute(query)
 
     data = '<h1>Courses:</h1>'
-    data += '<table style="width:800px">'
+    data = '<div class="container">' + \
+            '<div class="row no-gutters">' + \
+    '<style>a{display: flex; justify-content: center; margin-bottom: 40px;} .container{display: flex; justify-content: center; margin: 40px;} th{padding: .45rem .25rem;} *{padding: 0;margin: 0;box-sizing: border-box;font-family: "Nunito", sans-serif;}body{background: #c6ccc3;}.row{background: #fefdfd;border-radius: 30px;box-shadow: 12px 12px 22px grey;}img{border-top-left-radius: 30px;border-bottom-left-radius: 30px;}.btn1{border: none;outline: none;margin-bottom: 0;height: 50px;width: 100%;background-color: #24252f;color: #fefdfd;border-radius: 4px;font-weight: bold;}.btn1:hover{background: #fefdfd;border: 2px solid;color: #3a3153;a{color: black;}br{margin: 0;}</style>'
+    data += '<table style="width:800px"><br></br>'
     data += '<tr><th>Course ID</th> <th>Course Title</th>' + \
             '<th>Department Name</th> <th>Section</th>' + \
             '<th>Semester</th> <th>Year</th></tr>'
@@ -80,7 +83,7 @@ def studentResult(request):
              '<th>' + str(year) + '</th>' +
              '</t>')
         data += r
-    data += '</table>'
+    data += '</table><br></br>'
     data += '<a href="/student/">Back</a>'
 
     mycursor.close()
