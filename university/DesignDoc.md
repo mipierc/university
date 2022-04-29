@@ -23,14 +23,17 @@ and mySQL version 8.0.28.
 Accounts are handled through the built-in django account manager accessible at `http://[hostname]/admin`. The users for the application are already created, and consist of `admin`, `instructor`, and `student`. Each has a unique login, with the credentials listed below.
 
 Student
+
 `username` student
 `password` j9p8XVLCDwqs7ch
 
 Instructor
+
 `username` instructor
 `password` BaAa5RLbbAb2zHY
 
 Admininstator
+
 `username` admin
 `password` VEcPmp7SQcbd5Ez
 
